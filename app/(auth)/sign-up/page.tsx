@@ -2,21 +2,19 @@
 
 import React from "react";
 import { z } from "zod";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { SigninSchema, SignupSchema } from "@/lib/validation";
+import { SignupSchema } from "@/lib/validation";
 import Image from "next/image";
 import AuthButton from "@/components/shared/AuthButton";
 import Link from "next/link";

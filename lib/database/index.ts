@@ -1,12 +1,22 @@
 import mongoose from "mongoose";
 
-export const connectDB = () => {
-  if (!process.env.MONGODB_URI) throw new Error("MONGODB URI is not present");
+const MONGODB_URI = process.env.MONGODB_URI;
 
-  mongoose
-    .connect(process.env.MONGODB_URI)
-    .then(() => {
-      console.log("Database Connected");
-    })
-    .catch((error) => console.log(error));
+let cached = (global as any).mongoose || { conn: null, promise: null };
+
+export const connectDB = async () => {
+  if (cached.conn) return cached.conn;
+
+  if (!MONGODB_URI) throw new Error("MONGODB_URI is missing");
+
+  cached.promise =
+    cached.promise ||
+    mongoose.connect(MONGODB_URI, {
+      dbName: "evently",
+      bufferCommands: false,
+    });
+
+  cached.conn = await cached.promise;
+
+  return cached.conn;
 };

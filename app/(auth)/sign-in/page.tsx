@@ -1,16 +1,13 @@
 "use client";
 
-import { SignIn } from "@clerk/nextjs";
 import React from "react";
 import { z } from "zod";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,7 +15,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { SigninSchema } from "@/lib/validation";
-import Image from "next/image";
 import AuthButton from "@/components/shared/AuthButton";
 import Link from "next/link";
 

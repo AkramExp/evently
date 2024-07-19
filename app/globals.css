@@ -228,6 +228,16 @@ body {
   .toggle-switch {
     @apply bg-gray-300 !important;
   }
+
+  .form-label {
+    @apply text-gray-700 text-sm;
+  }
+}
+
+@layer components {
+  .shad-input {
+    @apply ring-0 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 !important;
+  }
 }
 
 /* ========================================== CLERK STYLES */
