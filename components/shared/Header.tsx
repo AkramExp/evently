@@ -10,7 +10,6 @@ import LogoutButton from "./LogoutButton";
 
 const Header = () => {
   const { user } = useContext(authContext);
-  console.log(user);
 
   return (
     <header className="w-full border-b">
@@ -33,8 +32,8 @@ const Header = () => {
         <div className="flex w-32 justify-end gap-3">
           {user && (
             <div className="flex items-center gap-2">
-              <MobileNav />
               <LogoutButton />
+              <MobileNav />
             </div>
           )}
           {!user && (

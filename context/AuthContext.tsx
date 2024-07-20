@@ -25,14 +25,14 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { user, isLoadingUser } = useCurrentUser();
 
-  useEffect(() => {
-    if (!isLoadingUser && !user) {
-      setIsAuthenticated(false);
-      //   router.push("/sign-in");
-    } else {
-      setIsAuthenticated(true);
-    }
-  }, [isLoadingUser, user]);
+  // useEffect(() => {
+  //   if (!isLoadingUser && !user) {
+  //     setIsAuthenticated(false);
+  //     //   router.push("/sign-in");
+  //   } else {
+  //     setIsAuthenticated(true);
+  //   }
+  // }, [isLoadingUser, user]);
 
   return (
     <authContext.Provider value={{ user, isLoadingUser, isAuthenticated }}>
