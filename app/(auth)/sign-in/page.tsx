@@ -17,8 +17,11 @@ import { Input } from "@/components/ui/input";
 import { SigninSchema } from "@/lib/validation";
 import AuthButton from "@/components/shared/AuthButton";
 import Link from "next/link";
+import { useLoginUser } from "@/lib/react-query/user";
 
 const Signin = () => {
+  const { loginUser, isLoggingUser } = useLoginUser();
+
   const form = useForm<z.infer<typeof SigninSchema>>({
     resolver: zodResolver(SigninSchema),
     defaultValues: {
@@ -28,7 +31,7 @@ const Signin = () => {
   });
 
   function onSubmit(values: z.infer<typeof SigninSchema>) {
-    console.log(values);
+    loginUser(values);
   }
 
   return (

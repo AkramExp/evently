@@ -1,13 +1,18 @@
 import { User } from "@/lib/database/models/user.model";
 import { NextRequest, NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
+import { connectDB } from "@/lib/database";
 
 export async function POST(request: NextRequest) {
+  await connectDB();
+
   try {
     const reqBody = await request.json();
+    console.log(reqBody);
+
     const { name, username, email, password } = reqBody;
 
-    const findUser = await User.findOne({ $or: [email, username] });
+    const findUser = await User.findOne({ $or: [{ email }, { username }] });
 
     if (findUser)
       return NextResponse.json({
@@ -15,8 +20,8 @@ export async function POST(request: NextRequest) {
         status: 400,
       });
 
-    const salt = bcryptjs.genSaltSync(10);
-    const hashedPassword = bcryptjs.hash(password, salt);
+    const salt = await bcryptjs.genSaltSync(10);
+    const hashedPassword = await bcryptjs.hash(password, salt);
 
     await User.create({
       name,

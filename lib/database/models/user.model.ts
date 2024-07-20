@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { models, Schema } from "mongoose";
 
 const userSchema = new Schema({
   email: { type: String },
@@ -8,4 +8,4 @@ const userSchema = new Schema({
   password: { type: String },
 });
 
-export const User = mongoose.model("User", userSchema);
+export const User = models.User || mongoose.model("User", userSchema);

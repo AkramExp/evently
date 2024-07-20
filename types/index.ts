@@ -8,6 +8,13 @@ export type CreateUserParams = {
   photo: string;
 };
 
+export type INewUser = {
+  username: string;
+  name: string;
+  email: string;
+  password: string;
+};
+
 export type UpdateUserParams = {
   firstName: string;
   lastName: string;

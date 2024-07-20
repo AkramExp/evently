@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
+import ReactQueryProvider from "@/components/shared/ReactQueryProvider";
+import { Toaster } from "react-hot-toast";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -20,10 +21,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <ClerkProvider>
-        <body className={poppins.variable}>{children}</body>
-      </ClerkProvider>
-    </html>
+    <ReactQueryProvider>
+      <html lang="en">
+        <body className={poppins.variable}>
+          <Toaster position="top-center" />
+          {children}
+        </body>
+      </html>
+    </ReactQueryProvider>
   );
 }

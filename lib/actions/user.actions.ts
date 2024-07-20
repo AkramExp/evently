@@ -5,7 +5,7 @@ import { handleError } from "../utils";
 import { connectDB } from "../database";
 import { User } from "../database/models/user.model";
 
-export const createUser = async (user: CreateUserParams) => {
+export const registerUser = async (user: CreateUserParams) => {
   try {
     await connectDB();
 
