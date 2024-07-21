@@ -1,7 +1,7 @@
-import { useMutation } from "@tanstack/react-query";
-import { createEvent as createEventApi } from "../services/event";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createEvent as createEventApi, getEventById } from "../services/event";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 export function useCreateEvent() {
   const router = useRouter();
@@ -18,4 +18,13 @@ export function useCreateEvent() {
   });
 
   return { createEvent, isCreating };
+}
+
+export function useEventById(id: string) {
+  const { data: event, isLoading: isLoadingEvent } = useQuery({
+    queryKey: ["event", id],
+    queryFn: () => getEventById(id),
+  });
+
+  return { event, isLoadingEvent };
 }

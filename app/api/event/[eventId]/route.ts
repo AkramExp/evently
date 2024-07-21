@@ -1,27 +1,13 @@
-"use server";
-import { IEvent } from "@/types";
-import axios from "axios";
+import { Event } from "@/lib/database/models/event.model";
 import mongoose from "mongoose";
-import { Event } from "../database/models/event.model";
-import { connectDB } from "../database";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function createEvent(event: IEvent) {
+export async function GET(
+  request: NextRequest,
+  route: { params: { eventId: string } }
+) {
   try {
-    const response = await axios.post("/api/event/create", event, {
-      withCredentials: true,
-    });
-
-    if (response.data.error) throw new Error(response.data.error);
-
-    return response.data;
-  } catch (error: any) {
-    throw error.props;
-  }
-}
-
-export async function getEventById(eventId: string) {
-  try {
-    await connectDB();
+    const eventId = route.params.eventId;
 
     const event = await Event.aggregate([
       {
@@ -61,8 +47,8 @@ export async function getEventById(eventId: string) {
       },
     ]);
 
-    return JSON.parse(JSON.stringify(event[0]));
+    return NextResponse.json({ status: 200, data: event[0] });
   } catch (error: any) {
-    throw Error("Event Does not exists");
+    return NextResponse.json({ status: 400, error: error.message });
   }
 }
