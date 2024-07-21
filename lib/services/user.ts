@@ -56,5 +56,6 @@ export async function logoutUser() {
     return response.data;
   } catch (error: any) {
     console.log(error.props);
+    throw error.props;
   }
 }

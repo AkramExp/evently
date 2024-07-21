@@ -19,6 +19,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Input } from "../ui/input";
+import { useAddCategory, useCategories } from "@/lib/react-query/category";
 
 type DropdownProps = {
   onChangeHandler: () => void;
@@ -26,10 +27,15 @@ type DropdownProps = {
 };
 
 const Dropdown = ({ onChangeHandler, value }: DropdownProps) => {
-  const [categories, setCategories] = useState<ICategory[]>([]);
+  const { categories, isLoadingCategories } = useCategories();
+  const { addCategory, isAdding } = useAddCategory();
+
   const [newCategory, setNewCategory] = useState("");
 
-  function handleAddCategory() {}
+  function handleAddCategory() {
+    if (newCategory.trim() === "") return;
+    addCategory(newCategory);
+  }
 
   return (
     <Select onValueChange={onChangeHandler} defaultValue={value}>
@@ -37,8 +43,12 @@ const Dropdown = ({ onChangeHandler, value }: DropdownProps) => {
         <SelectValue placeholder="Category" />
       </SelectTrigger>
       <SelectContent>
-        {categories.length > 0 &&
-          categories.map((category) => (
+        {isLoadingCategories && (
+          <p className="select-item p-regular-14 px-6">Loading Categories...</p>
+        )}
+        {categories &&
+          categories.length > 0 &&
+          categories.map((category: { _id: string; name: string }) => (
             <SelectItem
               key={category._id}
               value={category._id}
@@ -49,7 +59,7 @@ const Dropdown = ({ onChangeHandler, value }: DropdownProps) => {
           ))}
         <AlertDialog>
           <AlertDialogTrigger className="p-medium-14 flex w-full rounded-sm py-3 pl-8 text-primary-500 hover:bg-primary-50 focus-within:text-primary-500">
-            Open
+            Add Category +
           </AlertDialogTrigger>
           <AlertDialogContent className="bg-white">
             <AlertDialogHeader>
@@ -67,6 +77,8 @@ const Dropdown = ({ onChangeHandler, value }: DropdownProps) => {
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => startTransition(handleAddCategory)}
+                disabled={isAdding}
+                className="disabled:cursor-not-allowed"
               >
                 Add
               </AlertDialogAction>
