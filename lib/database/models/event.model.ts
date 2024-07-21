@@ -12,8 +12,8 @@ export interface IEvent extends Document {
   price?: string;
   isFree: boolean;
   url?: string;
-  category: { _id: string; name: string };
-  organizer: { _id: string; name: string };
+  categoryId: string;
+  organizerId: string;
 }
 
 const eventSchema = new Schema(
@@ -27,10 +27,10 @@ const eventSchema = new Schema(
     price: { type: String },
     isFree: { type: Boolean, default: false },
     url: { type: String },
-    category: { type: Schema.Types.ObjectId, ref: "Category" },
-    organizer: { type: Schema.Types.ObjectId, ref: "User" },
+    categoryId: { type: Schema.Types.ObjectId, ref: "Category" },
+    organizerId: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );
 
-export const Event = models.events || mongoose.model("Event", eventSchema);
+export const Event = models.Event || mongoose.model("Event", eventSchema);

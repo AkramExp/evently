@@ -20,24 +20,53 @@ import { Textarea } from "../ui/textarea";
 import { FileUploader } from "./FileUploader";
 import Image from "next/image";
 import DatePicker from "react-datepicker";
-
 import "react-datepicker/dist/react-datepicker.css";
 import { Checkbox } from "../ui/checkbox";
+import { useUploadThing } from "@/lib/uploadthing";
+import { useCreateEvent } from "@/lib/react-query/event";
 
 const EventForm = ({ type }: { type: string }) => {
   const intialValues = eventDefaultValues;
   const [files, setFiles] = useState<File[]>([]);
-  const [startDate, setStartDate] = useState(new Date());
+  const { createEvent, isCreating } = useCreateEvent();
+  const { startUpload } = useUploadThing("imageUploader");
 
   const form = useForm<z.infer<typeof EventFormSchema>>({
     resolver: zodResolver(EventFormSchema),
     defaultValues: intialValues,
   });
 
-  function onSubmit(values: z.infer<typeof EventFormSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof EventFormSchema>) {
+    let uploadedImgUrl = values.imageUrl;
+
+    if (files.length > 0) {
+      const uploadedImages = await startUpload(files);
+
+      if (!uploadedImages) {
+        return;
+      }
+
+      uploadedImgUrl = uploadedImages[0].url;
+    }
+
+    const eventData = {
+      title: values.title,
+      description: values.description,
+      location: values.location,
+      imageUrl: uploadedImgUrl,
+      startDateTime: values.startDateTime,
+      endDateTime: values.endDateTime,
+      price: values.price,
+      isFree: values.isFree,
+      url: values.url,
+      categoryId: values.categoryId,
+    };
+
+    createEvent(eventData, {
+      onSuccess: () => {
+        form.reset();
+      },
+    });
   }
 
   return (
@@ -250,6 +279,8 @@ const EventForm = ({ type }: { type: string }) => {
                                 Free Ticket
                               </label>
                               <Checkbox
+                                onCheckedChange={field.onChange}
+                                checked={field.value}
                                 id="isFree"
                                 className="mr-2 h-5 w-5 border-2 border-primary-500"
                               />
@@ -296,8 +327,8 @@ const EventForm = ({ type }: { type: string }) => {
         <Button
           type="submit"
           size="lg"
-          disabled={form.formState.isSubmitting}
-          className="buttonn col-span-2 w-full"
+          disabled={isCreating}
+          className="buttonn col-span-2 w-full disabled:cursor-not-allowed"
         >
           {form.formState.isSubmitting ? "Submitting" : "Create"}
         </Button>

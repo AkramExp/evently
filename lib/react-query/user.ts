@@ -9,8 +9,6 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 export function useRegisterUser() {
-  const router = useRouter();
-
   const { mutate: registerUser, isPending: isRegistering } = useMutation({
     mutationFn: registerUserApi,
     onSuccess: (response) => {

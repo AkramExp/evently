@@ -21,6 +21,19 @@ export type UpdateUserParams = {
 };
 
 // ====== EVENT PARAMS
+export type IEvent = {
+  title: string;
+  description: string;
+  location: string;
+  imageUrl: string;
+  startDateTime: Date;
+  endDateTime: Date;
+  categoryId: string;
+  price: string;
+  isFree: boolean;
+  url: string;
+};
+
 export type CreateEventParams = {
   userId: string;
   event: {
