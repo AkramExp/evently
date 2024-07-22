@@ -1,5 +1,5 @@
 "use server";
-import { IEvent } from "@/types";
+import { GetAllEventsParams, IEvent } from "@/types";
 import axios from "axios";
 import mongoose from "mongoose";
 import { Event } from "../database/models/event.model";
@@ -63,6 +63,22 @@ export async function getEventById(eventId: string) {
 
     return JSON.parse(JSON.stringify(event[0]));
   } catch (error: any) {
-    throw Error("Event Does not exists");
+    throw Error(error.message);
+  }
+}
+
+export async function getAllEvents({
+  query,
+  limit = 6,
+  page,
+  category,
+}: GetAllEventsParams) {
+  try {
+    await connectDB();
+    const events = await Event.find().sort({ createdAt: -1 }).limit(6).skip(0);
+
+    return { data: events, pages: events.length / limit };
+  } catch (error: any) {
+    throw Error(error.message);
   }
 }
