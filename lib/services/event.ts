@@ -4,6 +4,7 @@ import axios from "axios";
 import mongoose from "mongoose";
 import { Event } from "../database/models/event.model";
 import { connectDB } from "../database";
+import { revalidatePath } from "next/cache";
 
 export async function createEvent(event: IEvent) {
   try {
@@ -75,9 +76,66 @@ export async function getAllEvents({
 }: GetAllEventsParams) {
   try {
     await connectDB();
-    const events = await Event.find().sort({ createdAt: -1 }).limit(6).skip(0);
+    const events = await Event.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          localField: "organizerId",
+          foreignField: "_id",
+          as: "organizer",
+        },
+      },
+      {
+        $addFields: {
+          organizer: {
+            $first: "$organizer",
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "categoryId",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      {
+        $addFields: {
+          category: {
+            $first: "$category",
+          },
+        },
+      },
+      {
+        $sort: {
+          createdAt: -1,
+        },
+      },
+      {
+        $limit: 6,
+      },
+      {
+        $skip: 0,
+      },
+    ]);
 
     return { data: events, pages: events.length / limit };
+  } catch (error: any) {
+    throw Error(error.message);
+  }
+}
+
+export async function deleteEvent(eventId: string, path: string) {
+  try {
+    await connectDB();
+    const deleteEvent = await Event.findByIdAndDelete(eventId);
+
+    if (!deleteEvent) throw Error("Event does not exists");
+
+    revalidatePath(path);
+
+    return { data: deleteEvent, message: "Event Deleted Successfully" };
   } catch (error: any) {
     throw Error(error.message);
   }

@@ -1,7 +1,6 @@
 import { INewUser } from "@/types";
 import axios from "axios";
 import Error from "next/error";
-import { NextRequest } from "next/server";
 
 export async function registerUser(user: INewUser) {
   try {

@@ -1,5 +1,6 @@
 import { getAllEvents } from "@/lib/services/event";
 import React from "react";
+import Card from "./Card";
 
 type CollectionProps = {
   data: any[];
@@ -30,7 +31,15 @@ const Collection = ({
             {data.map((event) => {
               const hasOrderLink = collectionType === "Events_Organized";
               const hidePrice = collectionType === "My_Tickets";
-              return <li key={event._id} className="flex justify-center"></li>;
+              return (
+                <li key={event._id} className="flex justify-center">
+                  <Card
+                    event={event}
+                    hasOrderLink={hasOrderLink}
+                    hidePrice={hidePrice}
+                  />
+                </li>
+              );
             })}
           </ul>
         </div>
