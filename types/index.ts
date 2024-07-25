@@ -22,7 +22,6 @@ export type UpdateUserParams = {
 
 // ====== EVENT PARAMS
 export type IEvent = {
-  _id: string;
   title: string;
   description: string;
   location: string;
@@ -60,6 +59,20 @@ export type IEvent2 = {
   url: string;
   category: ICategory;
   organizer: IUser;
+};
+
+export type IUpdateEvent = {
+  _id: string;
+  title: string;
+  description: string;
+  location: string;
+  imageUrl: string;
+  startDateTime: Date;
+  endDateTime: Date;
+  categoryId: string;
+  price: string;
+  isFree: boolean;
+  url: string;
 };
 
 export type CreateEventParams = {

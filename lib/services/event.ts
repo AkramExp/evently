@@ -1,5 +1,5 @@
 "use server";
-import { GetAllEventsParams, IEvent } from "@/types";
+import { GetAllEventsParams, IEvent, IUpdateEvent } from "@/types";
 import axios from "axios";
 import mongoose from "mongoose";
 import { Event } from "../database/models/event.model";
@@ -119,8 +119,9 @@ export async function getAllEvents({
         $skip: 0,
       },
     ]);
-
-    return { data: events, pages: events.length / limit };
+    return JSON.parse(
+      JSON.stringify({ data: events, pages: events.length / limit })
+    );
   } catch (error: any) {
     throw Error(error.message);
   }
@@ -135,7 +136,39 @@ export async function deleteEvent(eventId: string, path: string) {
 
     revalidatePath(path);
 
-    return { data: deleteEvent, message: "Event Deleted Successfully" };
+    return JSON.parse(
+      JSON.stringify({
+        data: deleteEvent,
+        message: "Event Deleted Successfully",
+      })
+    );
+  } catch (error: any) {
+    throw Error(error.message);
+  }
+}
+
+export async function updateEvent(event: IUpdateEvent) {
+  try {
+    await connectDB();
+    const updateEvent = await Event.findByIdAndUpdate(event._id, {
+      title: event.title,
+      description: event.description,
+      location: event.location,
+      imageUrl: event.imageUrl,
+      startDateTime: event.startDateTime,
+      endDateTime: event.endDateTime,
+      price: event.price,
+      isFree: event.isFree,
+      url: event.url,
+      categoryId: event.categoryId,
+    });
+
+    return JSON.parse(
+      JSON.stringify({
+        message: "Event Updated Successfully",
+        data: updateEvent,
+      })
+    );
   } catch (error: any) {
     throw Error(error.message);
   }

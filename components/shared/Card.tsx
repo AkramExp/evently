@@ -1,3 +1,5 @@
+"use client";
+
 import { formatDateTime } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,9 +15,11 @@ type CardProps = {
 };
 
 const Card = ({ event, hasOrderLink, hidePrice }: CardProps) => {
-  const { user } = useCurrentUser();
+  const { user, isLoadingUser } = useCurrentUser();
 
-  const isEventCreator = user._id === event.organizer._id;
+  if (isLoadingUser) return null;
+
+  const isEventCreator = user?._id === event.organizer._id;
 
   return (
     <div className="group relative flex min-h-[380px] w-full max-w-[400px] flex-col overflow-hidden rounded-xl bg-white shadow-md transition-all hover:shadow-lg md:min-h-[438px]">

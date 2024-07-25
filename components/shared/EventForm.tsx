@@ -24,16 +24,32 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Checkbox } from "../ui/checkbox";
 import { useUploadThing } from "@/lib/uploadthing";
 import { useCreateEvent } from "@/lib/react-query/event";
+import { IEvent2 } from "@/types";
+import { updateEvent } from "@/lib/services/event";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
-const EventForm = ({ type }: { type: string }) => {
+const EventForm = ({ type, event }: { type: string; event?: IEvent2 }) => {
   const intialValues = eventDefaultValues;
   const [files, setFiles] = useState<File[]>([]);
   const { createEvent, isCreating } = useCreateEvent();
   const { startUpload } = useUploadThing("imageUploader");
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof EventFormSchema>>({
     resolver: zodResolver(EventFormSchema),
-    defaultValues: intialValues,
+    defaultValues: {
+      title: event?.title || "",
+      description: event?.description || "",
+      location: event?.location || "",
+      imageUrl: event?.imageUrl || "",
+      startDateTime: new Date(event?.startDateTime || "") || new Date(),
+      endDateTime: new Date(event?.endDateTime || "") || new Date(),
+      categoryId: event?.category._id || "",
+      price: event?.price || "",
+      isFree: event?.isFree || false,
+      url: event?.url || "",
+    },
   });
 
   async function onSubmit(values: z.infer<typeof EventFormSchema>) {
@@ -49,24 +65,49 @@ const EventForm = ({ type }: { type: string }) => {
       uploadedImgUrl = uploadedImages[0].url;
     }
 
-    const eventData = {
-      title: values.title,
-      description: values.description,
-      location: values.location,
-      imageUrl: uploadedImgUrl,
-      startDateTime: values.startDateTime,
-      endDateTime: values.endDateTime,
-      price: values.price,
-      isFree: values.isFree,
-      url: values.url,
-      categoryId: values.categoryId,
-    };
+    if (type === "create") {
+      const eventData = {
+        title: values.title,
+        description: values.description,
+        location: values.location,
+        imageUrl: uploadedImgUrl,
+        startDateTime: values.startDateTime,
+        endDateTime: values.endDateTime,
+        price: values.price,
+        isFree: values.isFree,
+        url: values.url,
+        categoryId: values.categoryId,
+      };
 
-    createEvent(eventData, {
-      onSuccess: () => {
-        form.reset();
-      },
-    });
+      createEvent(eventData, {
+        onSuccess: () => {
+          form.reset();
+        },
+      });
+    }
+
+    if (type === "update") {
+      const eventData = {
+        _id: event?._id || "",
+        title: values.title,
+        description: values.description,
+        location: values.location,
+        imageUrl: uploadedImgUrl,
+        startDateTime: values.startDateTime,
+        endDateTime: values.endDateTime,
+        price: values.price,
+        isFree: values.isFree,
+        url: values.url,
+        categoryId: values.categoryId,
+      };
+
+      updateEvent(eventData)
+        .then((response) => {
+          toast(response.message);
+          router.push("/");
+        })
+        .catch((error) => console.log(error));
+    }
   }
 
   return (
@@ -330,7 +371,11 @@ const EventForm = ({ type }: { type: string }) => {
           disabled={isCreating}
           className="buttonn col-span-2 w-full disabled:cursor-not-allowed"
         >
-          {form.formState.isSubmitting ? "Submitting" : "Create"}
+          {form.formState.isSubmitting
+            ? "Submitting"
+            : type === "update"
+            ? "Update"
+            : "Create"}
         </Button>
       </form>
     </Form>
