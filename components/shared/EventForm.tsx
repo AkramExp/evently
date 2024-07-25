@@ -106,7 +106,7 @@ const EventForm = ({ type, event }: { type: string; event?: IEvent2 }) => {
           toast(response.message);
           router.push("/");
         })
-        .catch((error) => console.log(error));
+        .catch((error) => toast(error.message));
     }
   }
 

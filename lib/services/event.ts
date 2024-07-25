@@ -163,12 +163,81 @@ export async function updateEvent(event: IUpdateEvent) {
       categoryId: event.categoryId,
     });
 
+    revalidatePath(`/events/${event._id}/update`);
+
     return JSON.parse(
       JSON.stringify({
         message: "Event Updated Successfully",
         data: updateEvent,
       })
     );
+  } catch (error: any) {
+    throw Error(error.message);
+  }
+}
+
+export async function getRelatedEventsByCategory(
+  categoryId: string,
+  eventId: string,
+  limit: number = 3,
+  page: number
+) {
+  try {
+    await connectDB();
+
+    const events = await Event.aggregate([
+      {
+        $match: {
+          categoryId: new mongoose.Types.ObjectId(categoryId),
+          _id: {
+            $ne: new mongoose.Types.ObjectId(eventId),
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "organizerId",
+          foreignField: "_id",
+          as: "organizer",
+        },
+      },
+      {
+        $addFields: {
+          organizer: {
+            $first: "$organizer",
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "categoryId",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      {
+        $addFields: {
+          category: {
+            $first: "$category",
+          },
+        },
+      },
+      {
+        $sort: {
+          createdAt: -1,
+        },
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $skip: 0,
+      },
+    ]);
+
+    return JSON.parse(JSON.stringify({ data: events }));
   } catch (error: any) {
     throw Error(error.message);
   }

@@ -15,8 +15,6 @@ export async function GET(request: NextRequest) {
 
     const findUser = await User.findById(decodedToken._id).select("-password");
 
-    console.log(findUser);
-
     return NextResponse.json({ data: findUser, status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message, status: 400 });
