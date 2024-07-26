@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { EventFormSchema } from "@/lib/validation";
-import { eventDefaultValues } from "@/constants";
 import Dropdown from "./Dropdown";
 import { Textarea } from "../ui/textarea";
 import { FileUploader } from "./FileUploader";
@@ -25,14 +24,12 @@ import { Checkbox } from "../ui/checkbox";
 import { useUploadThing } from "@/lib/uploadthing";
 import { useCreateEvent } from "@/lib/react-query/event";
 import { IEvent2 } from "@/types";
-import { updateEvent } from "@/lib/services/event";
+import { createEvent, updateEvent } from "@/lib/services/event";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 const EventForm = ({ type, event }: { type: string; event?: IEvent2 }) => {
-  const intialValues = eventDefaultValues;
   const [files, setFiles] = useState<File[]>([]);
-  const { createEvent, isCreating } = useCreateEvent();
   const { startUpload } = useUploadThing("imageUploader");
   const router = useRouter();
 
@@ -43,8 +40,8 @@ const EventForm = ({ type, event }: { type: string; event?: IEvent2 }) => {
       description: event?.description || "",
       location: event?.location || "",
       imageUrl: event?.imageUrl || "",
-      startDateTime: new Date(event?.startDateTime || "") || new Date(),
-      endDateTime: new Date(event?.endDateTime || "") || new Date(),
+      startDateTime: event ? new Date(event?.startDateTime) : new Date(),
+      endDateTime: event ? new Date(event?.endDateTime) : new Date(),
       categoryId: event?.category._id || "",
       price: event?.price || "",
       isFree: event?.isFree || false,
@@ -53,60 +50,62 @@ const EventForm = ({ type, event }: { type: string; event?: IEvent2 }) => {
   });
 
   async function onSubmit(values: z.infer<typeof EventFormSchema>) {
-    let uploadedImgUrl = values.imageUrl;
+    try {
+      let uploadedImgUrl = values.imageUrl;
 
-    if (files.length > 0) {
-      const uploadedImages = await startUpload(files);
+      if (files.length > 0) {
+        const uploadedImages = await startUpload(files);
 
-      if (!uploadedImages) {
-        return;
+        if (!uploadedImages) {
+          return;
+        }
+
+        uploadedImgUrl = uploadedImages[0].url;
       }
 
-      uploadedImgUrl = uploadedImages[0].url;
-    }
+      if (type === "create") {
+        const eventData = {
+          title: values.title,
+          description: values.description,
+          location: values.location,
+          imageUrl: uploadedImgUrl,
+          startDateTime: values.startDateTime,
+          endDateTime: values.endDateTime,
+          price: values.price,
+          isFree: values.isFree,
+          url: values.url,
+          categoryId: values.categoryId,
+        };
 
-    if (type === "create") {
-      const eventData = {
-        title: values.title,
-        description: values.description,
-        location: values.location,
-        imageUrl: uploadedImgUrl,
-        startDateTime: values.startDateTime,
-        endDateTime: values.endDateTime,
-        price: values.price,
-        isFree: values.isFree,
-        url: values.url,
-        categoryId: values.categoryId,
-      };
+        const response = await createEvent(eventData);
+        router.push("/");
+        toast(response.message);
+      }
 
-      createEvent(eventData, {
-        onSuccess: () => {
-          form.reset();
-        },
-      });
-    }
+      if (type === "update") {
+        const eventData = {
+          _id: event?._id || "",
+          title: values.title,
+          description: values.description,
+          location: values.location,
+          imageUrl: uploadedImgUrl,
+          startDateTime: values.startDateTime,
+          endDateTime: values.endDateTime,
+          price: values.price,
+          isFree: values.isFree,
+          url: values.url,
+          categoryId: values.categoryId,
+        };
 
-    if (type === "update") {
-      const eventData = {
-        _id: event?._id || "",
-        title: values.title,
-        description: values.description,
-        location: values.location,
-        imageUrl: uploadedImgUrl,
-        startDateTime: values.startDateTime,
-        endDateTime: values.endDateTime,
-        price: values.price,
-        isFree: values.isFree,
-        url: values.url,
-        categoryId: values.categoryId,
-      };
-
-      updateEvent(eventData)
-        .then((response) => {
-          toast(response.message);
-          router.push("/");
-        })
-        .catch((error) => toast(error.message));
+        updateEvent(eventData)
+          .then((response) => {
+            toast(response.message);
+            router.push("/");
+          })
+          .catch((error) => toast(error.message));
+      }
+    } catch (error: any) {
+      console.log(error.message);
     }
   }
 
@@ -368,7 +367,7 @@ const EventForm = ({ type, event }: { type: string; event?: IEvent2 }) => {
         <Button
           type="submit"
           size="lg"
-          disabled={isCreating}
+          disabled={form.formState.isSubmitting}
           className="buttonn col-span-2 w-full disabled:cursor-not-allowed"
         >
           {form.formState.isSubmitting

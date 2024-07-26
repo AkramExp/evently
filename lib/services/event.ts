@@ -1,22 +1,36 @@
 "use server";
 import { GetAllEventsParams, IEvent, IUpdateEvent } from "@/types";
-import axios from "axios";
 import mongoose from "mongoose";
 import { Event } from "../database/models/event.model";
 import { connectDB } from "../database";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+import jwt from "jsonwebtoken";
 
 export async function createEvent(event: IEvent) {
   try {
-    const response = await axios.post("/api/event/create", event, {
-      withCredentials: true,
-    });
+    await connectDB();
 
-    if (response.data.error) throw new Error(response.data.error);
+    const token = cookies().get("token")?.value || "";
 
-    return response.data;
+    if (!token) throw Error("Unauthorized Request");
+
+    const decodedToken: any = jwt.verify(token, process.env.JWT_SECRET_KEY!);
+
+    const data = { ...event, organizerId: decodedToken._id };
+
+    const newEvent = await Event.create(data);
+
+    revalidatePath("/");
+
+    return JSON.parse(
+      JSON.stringify({
+        message: "Event Created Successfully",
+        data: newEvent,
+      })
+    );
   } catch (error: any) {
-    throw error.props;
+    throw Error(error.message);
   }
 }
 
