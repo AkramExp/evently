@@ -251,7 +251,7 @@ export async function getRelatedEventsByCategory(
       },
     ]);
 
-    return JSON.parse(JSON.stringify({ data: events }));
+    return JSON.parse(JSON.stringify(events));
   } catch (error: any) {
     throw Error(error.message);
   }

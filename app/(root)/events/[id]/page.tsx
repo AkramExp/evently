@@ -14,8 +14,6 @@ const EventDetails = async ({ params: { id } }: SearchParamProps) => {
     0
   );
 
-  console.log(relatedEvents);
-
   return (
     <>
       <section className="flex-center bg-primary-50 bd-dotted-pattern bg-contain">
