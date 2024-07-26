@@ -6,6 +6,8 @@ import { connectDB } from "../database";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
+import { User } from "../database/models/user.model";
+import { Category } from "../database/models/category.model";
 
 export async function createEvent(event: IEvent) {
   try {
@@ -252,6 +254,74 @@ export async function getRelatedEventsByCategory(
     ]);
 
     return JSON.parse(JSON.stringify(events));
+  } catch (error: any) {
+    throw Error(error.message);
+  }
+}
+
+export async function getUserEvents(
+  userId: string,
+  limit: number = 6,
+  page: number
+) {
+  try {
+    const skip = (page - 1) * limit;
+
+    const events = await Event.aggregate([
+      {
+        $match: {
+          organizerId: new mongoose.Types.ObjectId(userId),
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "organizerId",
+          foreignField: "_id",
+          as: "organizer",
+        },
+      },
+      {
+        $addFields: {
+          organizer: {
+            $first: "$organizer",
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "categoryId",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      {
+        $addFields: {
+          category: {
+            $first: "$category",
+          },
+        },
+      },
+      {
+        $sort: {
+          createdAt: -1,
+        },
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $skip: skip,
+      },
+    ]);
+
+    return JSON.parse(
+      JSON.stringify({
+        data: events,
+        totalPages: Math.ceil(events.length / limit),
+      })
+    );
   } catch (error: any) {
     throw Error(error.message);
   }
