@@ -1,5 +1,4 @@
 import { cookies } from "next/headers";
-import toast from "react-hot-toast";
 import jwt from "jsonwebtoken";
 
 export const getUserIdFromCookies = async () => {
@@ -12,6 +11,7 @@ export const getUserIdFromCookies = async () => {
 
     return decodedToken._id;
   } catch (error: any) {
-    toast(error.message);
+    // toast(error.message);
+    return null;
   }
 };

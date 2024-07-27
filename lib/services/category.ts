@@ -1,32 +1,39 @@
-import axios from "axios";
-import Error from "next/error";
+"use server";
+import { Category } from "../database/models/category.model";
+import { connectDB } from "../database";
+import { revalidatePath } from "next/cache";
 
 export async function addCategory(name: string) {
   try {
-    const response = await axios.post(
-      "/api/category/add",
-      { name },
-      { withCredentials: true }
+    await connectDB();
+
+    const findCategory = await Category.findOne({ name: name });
+
+    if (findCategory) throw new Error("Category Already Exists");
+
+    const newCategory = await Category.create({ name: name });
+
+    revalidatePath("/events/create");
+
+    return JSON.parse(
+      JSON.stringify({
+        message: "Category Added Successfully",
+        data: newCategory,
+      })
     );
-
-    if (response.data.error) throw new Error(response.data.error);
-
-    return response.data;
   } catch (error: any) {
-    throw error.props;
+    throw new Error(error.message);
   }
 }
 
 export async function getCategories() {
   try {
-    const response = await axios.get("/api/category/all", {
-      withCredentials: true,
-    });
+    await connectDB();
 
-    if (response.data.error) throw new Error(response.data.error);
+    const categories = await Category.find().sort({ createdAt: -1 });
 
-    return response.data.data;
+    return JSON.parse(JSON.stringify(categories));
   } catch (error: any) {
-    throw error.props;
+    throw Error(error.message);
   }
 }

@@ -1,4 +1,4 @@
-import React, { startTransition, useState } from "react";
+import React, { startTransition, useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -6,7 +6,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ICategory } from "@/lib/database/models/category.model";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,7 +18,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Input } from "../ui/input";
-import { useAddCategory, useCategories } from "@/lib/react-query/category";
+import { addCategory, getCategories } from "@/lib/services/category";
+import toast from "react-hot-toast";
+import { ICategory } from "@/types";
 
 type DropdownProps = {
   onChangeHandler: () => void;
@@ -27,14 +28,31 @@ type DropdownProps = {
 };
 
 const Dropdown = ({ onChangeHandler, value }: DropdownProps) => {
-  const { categories, isLoadingCategories } = useCategories();
-  const { addCategory, isAdding } = useAddCategory();
-
+  const [categories, setCategories] = useState<ICategory[]>([]);
+  const [isAdding, setIsAdding] = useState(false);
   const [newCategory, setNewCategory] = useState("");
+
+  useEffect(() => {
+    getCategories()
+      .then((response) => {
+        setCategories(response);
+      })
+      .catch((error) => toast(error.message));
+  }, []);
 
   function handleAddCategory() {
     if (newCategory.trim() === "") return;
-    addCategory(newCategory);
+
+    setIsAdding(true);
+
+    addCategory(newCategory)
+      .then((response) => {
+        toast(response.message);
+
+        setCategories((categories: any) => [...categories, response.data]);
+      })
+      .catch((error) => toast(error.message))
+      .finally(() => setIsAdding(false));
   }
 
   return (
@@ -43,9 +61,6 @@ const Dropdown = ({ onChangeHandler, value }: DropdownProps) => {
         <SelectValue placeholder="Category" />
       </SelectTrigger>
       <SelectContent>
-        {isLoadingCategories && (
-          <p className="select-item p-regular-14 px-6">Loading Categories...</p>
-        )}
         {categories &&
           categories.length > 0 &&
           categories.map((category: { _id: string; name: string }) => (

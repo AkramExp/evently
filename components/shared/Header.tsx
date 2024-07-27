@@ -1,15 +1,17 @@
-"use client";
+// "use client";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useContext } from "react";
 import { Button } from "../ui/button";
 import NavItems from "./NavItems";
 import MobileNav from "./MobileNav";
-import { authContext } from "@/context/AuthContext";
+// import { authContext } from "@/context/AuthContext";
 import LogoutButton from "./LogoutButton";
+import { getCurrentUser } from "@/lib/services/user";
 
-const Header = () => {
-  const { user } = useContext(authContext);
+const Header = async () => {
+  // const { user } = useContext(authContext);
+  const user = await getCurrentUser();
 
   return (
     <header className="w-full border-b">

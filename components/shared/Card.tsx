@@ -19,8 +19,6 @@ const Card = ({ event, hasOrderLink, hidePrice }: CardProps) => {
 
   if (isLoadingUser) return null;
 
-  console.log(user, event);
-
   const isEventCreator = user?._id === event.organizer._id;
 
   return (

@@ -7,8 +7,6 @@ export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json();
 
-    // console.log(email, password);
-
     const findUser = await User.findOne({ email });
 
     if (!findUser)

@@ -17,11 +17,10 @@ import { Input } from "@/components/ui/input";
 import { SignupSchema } from "@/lib/validation";
 import AuthButton from "@/components/shared/AuthButton";
 import Link from "next/link";
-import { useRegisterUser } from "@/lib/react-query/user";
+import { registerUser } from "@/lib/services/user";
+import toast from "react-hot-toast";
 
 const Signup = () => {
-  const { registerUser, isRegistering } = useRegisterUser();
-
   const form = useForm<z.infer<typeof SignupSchema>>({
     resolver: zodResolver(SignupSchema),
     defaultValues: {
@@ -33,7 +32,11 @@ const Signup = () => {
   });
 
   function onSubmit(values: z.infer<typeof SignupSchema>) {
-    registerUser(values);
+    registerUser(values)
+      .then((response) => {
+        toast(response.message);
+      })
+      .catch((error) => toast(error.message));
   }
 
   return (

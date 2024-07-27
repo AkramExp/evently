@@ -6,8 +6,6 @@ import { connectDB } from "../database";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
-import { User } from "../database/models/user.model";
-import { Category } from "../database/models/category.model";
 
 export async function createEvent(event: IEvent) {
   try {

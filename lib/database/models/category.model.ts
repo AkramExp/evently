@@ -5,9 +5,12 @@ export interface ICategory extends Document {
   name: string;
 }
 
-const categorySchema = new Schema({
-  name: { type: String, required: true, unique: true },
-});
+const categorySchema = new Schema(
+  {
+    name: { type: String, required: true, unique: true },
+  },
+  { timestamps: true }
+);
 
 export const Category =
   models.Category || mongoose.model("Category", categorySchema);

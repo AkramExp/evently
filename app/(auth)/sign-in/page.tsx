@@ -17,10 +17,12 @@ import { Input } from "@/components/ui/input";
 import { SigninSchema } from "@/lib/validation";
 import AuthButton from "@/components/shared/AuthButton";
 import Link from "next/link";
-import { useLoginUser } from "@/lib/react-query/user";
+import toast from "react-hot-toast";
+import { loginUser } from "@/lib/services/user";
+import { useRouter } from "next/navigation";
 
 const Signin = () => {
-  const { loginUser, isLoggingUser } = useLoginUser();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof SigninSchema>>({
     resolver: zodResolver(SigninSchema),
@@ -31,7 +33,12 @@ const Signin = () => {
   });
 
   function onSubmit(values: z.infer<typeof SigninSchema>) {
-    loginUser(values);
+    loginUser(values)
+      .then((response) => {
+        toast(response.message);
+        router.push("/");
+      })
+      .catch((error) => toast(error.message));
   }
 
   return (
