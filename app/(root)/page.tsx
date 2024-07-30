@@ -1,15 +1,21 @@
 import Collection from "@/components/shared/Collection";
+import Search from "@/components/shared/Search";
 import { Button } from "@/components/ui/button";
 import { getAllEvents } from "@/lib/services/event";
+import { SearchParamProps } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const Home = async () => {
+const Home = async ({ searchParams }: SearchParamProps) => {
+  const page = Number(searchParams?.page) || 1;
+  const searchText = (searchParams?.query as string) || "";
+  const category = (searchParams?.category as string) || "";
+
   const { data: events } = await getAllEvents({
-    query: "",
-    category: "",
-    page: 1,
+    query: searchText,
+    category,
+    page,
     limit: 6,
   });
 
@@ -47,7 +53,7 @@ const Home = async () => {
           Trusted by <br /> Thousands of Events
         </h2>
         <div className="flex w-full flex-col gap-5 md:flex-row">
-          search catagory filter
+          <Search /> filter
         </div>
 
         <Collection

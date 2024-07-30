@@ -6,6 +6,7 @@ import { connectDB } from "../database";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
+import { getCategoryByName } from "./category";
 
 export async function createEvent(event: IEvent) {
   try {
@@ -83,14 +84,33 @@ export async function getEventById(eventId: string) {
 }
 
 export async function getAllEvents({
-  query,
+  query = "",
   limit = 6,
   page,
-  category,
+  category = "",
 }: GetAllEventsParams) {
   try {
     await connectDB();
+    const skip = (page - 1) * limit;
+
+    const titleCondition = query
+      ? { title: { $regex: query, $options: "i" } }
+      : {};
+    const categoryCondition = category
+      ? await getCategoryByName(category)
+      : null;
+
+    const condition = {
+      $and: [
+        titleCondition,
+        categoryCondition ? { categoryId: categoryCondition._id } : {},
+      ],
+    };
+
     const events = await Event.aggregate([
+      {
+        $match: condition,
+      },
       {
         $lookup: {
           from: "users",
@@ -127,15 +147,16 @@ export async function getAllEvents({
         },
       },
       {
-        $limit: 6,
+        $limit: limit,
       },
       {
-        $skip: 0,
+        $skip: skip,
       },
     ]);
-    return JSON.parse(
-      JSON.stringify({ data: events, pages: events.length / limit })
-    );
+    return {
+      data: JSON.parse(JSON.stringify(events)),
+      totalPages: Math.ceil(events.length / limit),
+    };
   } catch (error: any) {
     throw Error(error.message);
   }

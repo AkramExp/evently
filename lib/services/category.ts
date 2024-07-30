@@ -37,3 +37,15 @@ export async function getCategories() {
     throw Error(error.message);
   }
 }
+
+export async function getCategoryByName(name: string) {
+  try {
+    await connectDB();
+
+    const category = await Category.findOne({ name });
+
+    return JSON.parse(JSON.stringify(category));
+  } catch (error: any) {
+    throw Error(error.message);
+  }
+}

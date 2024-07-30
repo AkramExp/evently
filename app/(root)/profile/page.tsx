@@ -3,10 +3,19 @@ import { Button } from "@/components/ui/button";
 import { getUserEvents } from "@/lib/services/event";
 import Link from "next/link";
 import { getUserIdFromCookies } from "@/lib/getUserIdFromCookies";
+import { getOrderByUser } from "@/lib/services/order";
+import { IOrder } from "@/lib/database/models/order.model";
+import { SearchParamProps } from "@/types";
 
-const Profile = async () => {
+const Profile = async ({ searchParams }: SearchParamProps) => {
+  const ordersPage = Number(searchParams?.ordersPage) || 1;
+  const eventsPage = Number(searchParams?.eventsPage) || 1;
+
   const userId = await getUserIdFromCookies();
-  const userEvents = await getUserEvents(userId, 6, 1);
+  const userEvents = await getUserEvents(userId, 6, eventsPage);
+
+  const orders = await getOrderByUser({ userId, page: ordersPage });
+  const orderedEvents = orders?.data?.map((order: IOrder) => order.event || []);
 
   return (
     <>
@@ -19,18 +28,18 @@ const Profile = async () => {
         </div>
       </section>
 
-      {/* <section className="wrapper my-8">
+      <section className="wrapper my-8">
         <Collection
-          data={events}
+          data={orderedEvents}
           emptyTitle="No event tickets purchased yet"
           emptyStateSubtext="No worries - plenty of exciting events to explore!"
           collectionType="My_Tickets"
           limit={3}
-          page={1}
+          page={ordersPage}
           urlParamName="ordersPage"
-          totalPages={2}
+          totalPages={orders?.totalPages}
         />
-      </section> */}
+      </section>
 
       <section className="bg-primary-50 bg-dotted-pattern bg-cover bg-center py-5 md:py-10">
         <div className="wrapper flex items-center justify-center sm:justify-between">
@@ -48,9 +57,9 @@ const Profile = async () => {
           emptyStateSubtext="Go create some now"
           collectionType="Events_Organized"
           limit={6}
-          page={1}
+          page={eventsPage}
           urlParamName="eventsPage"
-          totalPages={2}
+          totalPages={userEvents?.totalPages}
         />
       </section>
     </>
