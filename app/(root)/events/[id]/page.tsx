@@ -6,14 +6,19 @@ import { SearchParamProps } from "@/types";
 import Image from "next/image";
 import React from "react";
 
-const EventDetails = async ({ params: { id } }: SearchParamProps) => {
+const EventDetails = async ({
+  params: { id },
+  searchParams,
+}: SearchParamProps) => {
   const event = await getEventById(id);
-  const relatedEvents = await getRelatedEventsByCategory(
+  const { data: relatedEvents, totalPages } = await getRelatedEventsByCategory(
     event.category._id,
     event._id,
     3,
-    0
+    Number(searchParams.page) || 1
   );
+
+  console.log(totalPages);
 
   return (
     <>
@@ -97,9 +102,9 @@ const EventDetails = async ({ params: { id } }: SearchParamProps) => {
           emptyTitle="No Events Found"
           emptyStateSubtext="Come back later"
           collectionType="All_Events"
-          limit={6}
-          page={1}
-          totalPages={2}
+          limit={3}
+          page={(searchParams.page as string) || "1"}
+          totalPages={totalPages}
         />
       </section>
     </>

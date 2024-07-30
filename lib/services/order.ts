@@ -1,8 +1,9 @@
+"use server";
+
 import {
   GetOrdersByEventParams,
   GetOrdersByUserParams,
 } from "./../../types/index";
-("use server");
 
 import { CheckoutOrderParams, CreateOrderParams } from "@/types";
 import { redirect } from "next/navigation";

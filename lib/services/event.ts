@@ -220,6 +220,8 @@ export async function getRelatedEventsByCategory(
   try {
     await connectDB();
 
+    const skip = page === 1 ? 0 : (page - 1) * limit - 1;
+
     const events = await Event.aggregate([
       {
         $match: {
@@ -268,11 +270,21 @@ export async function getRelatedEventsByCategory(
         $limit: limit,
       },
       {
-        $skip: 0,
+        $skip: skip,
       },
     ]);
 
-    return JSON.parse(JSON.stringify(events));
+    const eventsCount = await Event.countDocuments({
+      categoryId: new mongoose.Types.ObjectId(categoryId),
+      _id: {
+        $ne: new mongoose.Types.ObjectId(eventId),
+      },
+    });
+
+    return {
+      data: JSON.parse(JSON.stringify(events)),
+      totalPages: Math.ceil(eventsCount / limit),
+    };
   } catch (error: any) {
     throw Error(error.message);
   }
