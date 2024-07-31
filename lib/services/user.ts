@@ -39,6 +39,8 @@ export async function registerUser(user: INewUser) {
 
 export async function loginUser(user: { email: string; password: string }) {
   try {
+    await connectDB();
+
     console.log("1", user);
 
     const findUser = await User.findOne({ email: user.email });
@@ -72,6 +74,7 @@ export async function loginUser(user: { email: string; password: string }) {
 
 export async function getCurrentUser() {
   try {
+    await connectDB();
     const userId = await getUserIdFromCookies();
 
     if (!userId) return null;
@@ -89,8 +92,6 @@ export async function getCurrentUser() {
 export async function logoutUser() {
   try {
     cookies().delete("token");
-
-    // revalidatePath("/");
 
     return JSON.parse(JSON.stringify({ message: "Logout Successfull" }));
   } catch (error: any) {
