@@ -1,14 +1,12 @@
 "use server";
 
 import { INewUser } from "@/types";
-import axios from "axios";
 import { connectDB } from "../database";
 import { User } from "../database/models/user.model";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 import { getUserIdFromCookies } from "../getUserIdFromCookies";
-import { revalidatePath } from "next/cache";
 
 export async function registerUser(user: INewUser) {
   try {
@@ -56,7 +54,7 @@ export async function loginUser(user: { email: string; password: string }) {
 
     cookies().set("token", token);
 
-    return JSON.parse(JSON.stringify({ message: "Login Successfull" }));
+    return { message: "Login Successfull" };
   } catch (error: any) {
     throw new Error(error.message);
   }
