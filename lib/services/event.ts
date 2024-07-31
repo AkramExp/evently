@@ -104,9 +104,13 @@ export async function getAllEvents({
     const condition = {
       $and: [
         titleCondition,
-        categoryCondition ? { categoryId: categoryCondition._id } : {},
+        categoryCondition
+          ? { categoryId: new mongoose.Types.ObjectId(categoryCondition._id) }
+          : {},
       ],
     };
+
+    console.log(condition);
 
     const events = await Event.aggregate([
       {
