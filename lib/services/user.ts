@@ -39,7 +39,11 @@ export async function registerUser(user: INewUser) {
 
 export async function loginUser(user: { email: string; password: string }) {
   try {
+    console.log("1", user);
+
     const findUser = await User.findOne({ email: user.email });
+
+    console.log("2", findUser);
 
     if (!findUser) throw new Error("Invalid Credentials");
 
@@ -48,14 +52,20 @@ export async function loginUser(user: { email: string; password: string }) {
       findUser.password!
     );
 
+    console.log("3", isPasswordValid);
+
     if (!isPasswordValid) throw new Error("Invalid Credentials");
 
     const token = jwt.sign({ _id: findUser._id }, process.env.JWT_SECRET_KEY!);
+
+    console.log("4", token);
 
     cookies().set("token", token);
 
     return { message: "Login Successfull" };
   } catch (error: any) {
+    console.log("5", error);
+
     throw new Error(error.message);
   }
 }
