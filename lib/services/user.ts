@@ -57,14 +57,6 @@ export async function loginUser(user: { email: string; password: string }) {
     cookies().set("token", token);
 
     return JSON.parse(JSON.stringify({ message: "Login Successfull" }));
-
-    // const response = await axios.post("/api/user/login", user, {
-    //   withCredentials: true,
-    // });
-
-    // if (response.data.error) throw new Error(response.data.error);
-
-    // return response.data;
   } catch (error: any) {
     throw new Error(error.message);
   }

@@ -35,10 +35,16 @@ const Signin = () => {
   function onSubmit(values: z.infer<typeof SigninSchema>) {
     loginUser(values)
       .then((response) => {
+        console.log(response);
+
         toast(response.message);
         router.push("/");
       })
-      .catch((error) => toast(error.message));
+      .catch((error) => {
+        console.log(error);
+
+        toast(error.message);
+      });
   }
 
   return (

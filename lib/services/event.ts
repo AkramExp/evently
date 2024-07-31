@@ -110,8 +110,6 @@ export async function getAllEvents({
       ],
     };
 
-    console.log(condition);
-
     const events = await Event.aggregate([
       {
         $match: condition,
