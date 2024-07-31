@@ -24,15 +24,6 @@ export function useCreateEvent() {
   return { createEvent, isCreating };
 }
 
-export function useAllEvents() {
-  const { data: allEvents, isLoading } = useQuery({
-    queryKey: ["events"],
-    queryFn: async () => await getAllEvents({ limit: 6, page: 1 }),
-  });
-
-  return { allEvents, isLoading };
-}
-
 export function useEventById(id: string) {
   const { data: event, isLoading: isLoadingEvent } = useQuery({
     queryKey: ["event", id],
