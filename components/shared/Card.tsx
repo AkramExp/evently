@@ -1,12 +1,10 @@
-"use client";
-
 import { formatDateTime } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { DeleteConfirmation } from "./DeleteConfirmation";
 import { IEvent2 } from "@/types";
-import { useCurrentUser } from "@/lib/react-query/user";
+import { getCurrentUser } from "@/lib/services/user";
 
 type CardProps = {
   event: IEvent2;
@@ -14,10 +12,8 @@ type CardProps = {
   hidePrice?: boolean;
 };
 
-const Card = ({ event, hasOrderLink, hidePrice }: CardProps) => {
-  const { user, isLoadingUser } = useCurrentUser();
-
-  if (isLoadingUser) return null;
+const Card = async ({ event, hasOrderLink, hidePrice }: CardProps) => {
+  const user = await getCurrentUser();
 
   const isEventCreator = user?._id === event.organizer._id;
 

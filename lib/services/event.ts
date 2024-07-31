@@ -1,4 +1,5 @@
 "use server";
+
 import { GetAllEventsParams, IEvent, IUpdateEvent } from "@/types";
 import mongoose from "mongoose";
 import { Event } from "../database/models/event.model";

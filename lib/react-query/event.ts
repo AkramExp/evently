@@ -1,5 +1,9 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createEvent as createEventApi, getEventById } from "../services/event";
+import {
+  createEvent as createEventApi,
+  getAllEvents,
+  getEventById,
+} from "../services/event";
 import toast from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
 
@@ -18,6 +22,15 @@ export function useCreateEvent() {
   });
 
   return { createEvent, isCreating };
+}
+
+export function useAllEvents() {
+  const { data: allEvents, isLoading } = useQuery({
+    queryKey: ["events"],
+    queryFn: async () => await getAllEvents({ limit: 6, page: 1 }),
+  });
+
+  return { allEvents, isLoading };
 }
 
 export function useEventById(id: string) {
