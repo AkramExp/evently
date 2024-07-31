@@ -1,5 +1,3 @@
-"use client";
-
 import { IEvent2 } from "@/types";
 import React from "react";
 import { Button } from "../ui/button";
@@ -8,9 +6,9 @@ import Checkout from "./Checkout";
 import { getUserIdFromCookies } from "@/lib/getUserIdFromCookies";
 import { getCurrentUser } from "@/lib/services/user";
 
-const CheckoutButton = ({ event }: { event: IEvent2 }) => {
+const CheckoutButton = async ({ event }: { event: IEvent2 }) => {
   const hasEventFinished = new Date(event.endDateTime) < new Date();
-  const userId = getCurrentUser();
+  const userId = await getCurrentUser();
 
   return (
     <div className="flex items-center gap-3">
@@ -25,7 +23,7 @@ const CheckoutButton = ({ event }: { event: IEvent2 }) => {
               <Link href="/sign-in">Get Tickets</Link>
             </Button>
           ) : (
-            <Checkout event={event} />
+            <Checkout event={event} userId={userId} />
           )}
         </>
       )}
