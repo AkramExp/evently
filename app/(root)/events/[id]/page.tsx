@@ -18,8 +18,6 @@ const EventDetails = async ({
     Number(searchParams.page) || 1
   );
 
-  console.log(totalPages);
-
   return (
     <>
       <section className="flex-center bg-primary-50 bd-dotted-pattern bg-contain">

@@ -7,6 +7,8 @@ loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 const Checkout = ({ event, userId }: { event: IEvent2; userId: string }) => {
   const onCheckout = async () => {
+    console.log("hello");
+
     const order = {
       eventTitle: event.title,
       eventId: event._id,
@@ -18,7 +20,7 @@ const Checkout = ({ event, userId }: { event: IEvent2; userId: string }) => {
     await checkoutOrder(order);
   };
   return (
-    <form action={onCheckout} method="post">
+    <form action={onCheckout}>
       <Button type="submit" role="link" size="lg" className="button sm:w-fit">
         {event.isFree ? "Get Ticket" : "Buy Ticket"}
       </Button>

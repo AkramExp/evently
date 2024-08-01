@@ -1,14 +1,22 @@
+"use client";
+
 import { IEvent2 } from "@/types";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import Checkout from "./Checkout";
-import { getUserIdFromCookies } from "@/lib/getUserIdFromCookies";
 import { getCurrentUser } from "@/lib/services/user";
 
-const CheckoutButton = async ({ event }: { event: IEvent2 }) => {
+const CheckoutButton = ({ event }: { event: IEvent2 }) => {
+  const [userId, setUserId] = useState("");
+
   const hasEventFinished = new Date(event.endDateTime) < new Date();
-  const userId = await getCurrentUser();
+
+  useEffect(() => {
+    getCurrentUser()
+      .then((response) => setUserId(response._id))
+      .catch((error) => console.log(error.message));
+  }, []);
 
   return (
     <div className="flex items-center gap-3">
