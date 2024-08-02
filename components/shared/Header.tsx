@@ -1,17 +1,16 @@
-// "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useContext } from "react";
+import React from "react";
 import { Button } from "../ui/button";
 import NavItems from "./NavItems";
 import MobileNav from "./MobileNav";
-// import { authContext } from "@/context/AuthContext";
 import LogoutButton from "./LogoutButton";
 import { getCurrentUser } from "@/lib/services/user";
 
 const Header = async () => {
-  // const { user } = useContext(authContext);
   const user = await getCurrentUser();
+
+  console.log(user);
 
   return (
     <header className="w-full border-b">
@@ -33,7 +32,15 @@ const Header = async () => {
 
         <div className="flex w-32 justify-end gap-3">
           {user && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
+              <Link href="/profile">
+                <Image
+                  src={user.avatar || "/assets/icons/profile-placeholder.svg"}
+                  alt="user"
+                  width={30}
+                  height={30}
+                />
+              </Link>
               <LogoutButton />
               <MobileNav />
             </div>
