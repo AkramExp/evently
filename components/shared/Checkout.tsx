@@ -7,8 +7,6 @@ loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 const Checkout = ({ event, userId }: { event: IEvent2; userId: string }) => {
   const onCheckout = async () => {
-    console.log("hello");
-
     const order = {
       eventTitle: event.title,
       eventId: event._id,
