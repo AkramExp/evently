@@ -10,8 +10,6 @@ import { getCurrentUser } from "@/lib/services/user";
 const Header = async () => {
   const user = await getCurrentUser();
 
-  console.log(user);
-
   return (
     <header className="w-full border-b">
       <div className="wrapper flex items-center justify-between">
@@ -34,11 +32,10 @@ const Header = async () => {
           {user && (
             <div className="flex items-center gap-3">
               <Link href="/profile">
-                <Image
-                  src={user.avatar || "/assets/icons/profile-placeholder.svg"}
+                <img
+                  src={user.photo || "/assets/icons/profile-placeholder.svg"}
                   alt="user"
-                  width={30}
-                  height={30}
+                  className="object-cover rounded-full w-10 h-10"
                 />
               </Link>
               <LogoutButton />

@@ -7,6 +7,7 @@ import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 import { getUserIdFromCookies } from "../getUserIdFromCookies";
+import { revalidatePath } from "next/cache";
 
 export async function registerUser(user: INewUser) {
   try {
@@ -101,6 +102,8 @@ export async function updateUser(data: IUpdateUser) {
       email: data.email,
       photo: data.photo,
     });
+
+    revalidatePath("/profile");
 
     return { message: "Profile Updated Successfully" };
   } catch (error: any) {
