@@ -1,10 +1,11 @@
 "use client";
 
-import { useCurrentUser } from "@/lib/react-query/user";
+import { getCurrentUser } from "@/lib/services/user";
 import { useRouter } from "next/navigation";
 import React, { createContext, useContext, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
-const intialUser = {
+const initialUser = {
   _id: "",
   name: "",
   username: "",
@@ -13,8 +14,7 @@ const intialUser = {
 };
 
 const intitalState = {
-  user: intialUser,
-  isLoadingUser: false,
+  user: initialUser,
   isAuthenticated: false,
 };
 
@@ -23,7 +23,13 @@ export const authContext = createContext(intitalState);
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { user, isLoadingUser } = useCurrentUser();
+  const [user, setUser] = useState(initialUser);
+
+  useEffect(() => {
+    getCurrentUser()
+      .then((response) => setUser(response))
+      .catch((error) => toast(error.message));
+  }, []);
 
   // useEffect(() => {
   //   if (!isLoadingUser && !user) {
@@ -35,7 +41,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // }, [isLoadingUser, user]);
 
   return (
-    <authContext.Provider value={{ user, isLoadingUser, isAuthenticated }}>
+    <authContext.Provider value={{ user, isAuthenticated }}>
       {children}
     </authContext.Provider>
   );

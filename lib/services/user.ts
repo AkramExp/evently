@@ -1,6 +1,6 @@
 "use server";
 
-import { INewUser } from "@/types";
+import { INewUser, IUpdateUser, IUser } from "@/types";
 import { connectDB } from "../database";
 import { User } from "../database/models/user.model";
 import bcryptjs from "bcryptjs";
@@ -83,6 +83,27 @@ export async function logoutUser() {
 
     return JSON.parse(JSON.stringify({ message: "Logout Successfull" }));
   } catch (error: any) {
-    throw error.props;
+    throw new Error(error.message);
+  }
+}
+
+export async function updateUser(data: IUpdateUser) {
+  try {
+    await connectDB();
+
+    const userId = await getUserIdFromCookies();
+
+    if (!userId) throw new Error("Unauthorized Request");
+
+    await User.findByIdAndUpdate(userId, {
+      name: data.name,
+      username: data.username,
+      email: data.email,
+      photo: data.photo,
+    });
+
+    return { message: "Profile Updated Successfully" };
+  } catch (error: any) {
+    throw new Error(error.message);
   }
 }

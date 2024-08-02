@@ -22,11 +22,10 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Checkbox } from "../ui/checkbox";
 import { useUploadThing } from "@/lib/uploadthing";
-import { useCreateEvent } from "@/lib/react-query/event";
-import { IEvent2 } from "@/types";
 import { createEvent, updateEvent } from "@/lib/services/event";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { IEvent2 } from "@/types";
 
 const EventForm = ({ type, event }: { type: string; event?: IEvent2 }) => {
   const [files, setFiles] = useState<File[]>([]);

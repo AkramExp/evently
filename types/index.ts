@@ -46,6 +46,13 @@ export type IUser = {
   photo: string;
 };
 
+export type IUpdateUser = {
+  name: string;
+  username: string;
+  photo: string;
+  email: string;
+};
+
 export type IEvent2 = {
   _id: string;
   title: string;
