@@ -132,15 +132,46 @@ export const getOrderByUser = async ({
 
     const condition = { buyer: userId };
 
-    const orders = await Order.distinct("event._id")
-      .find(condition)
-      .skip(skipAmount)
-      .limit(limit)
-      .populate({
-        path: "event",
-        model: Event,
-        populate: { path: "organizer", model: User, select: "_id name" },
-      });
+    const orders = await Order.aggregate([
+      {
+        $match: {
+          buyer: new mongoose.Types.ObjectId(userId!),
+        },
+      },
+      {
+        $lookup: {
+          from: "events",
+          foreignField: "_id",
+          localField: "event",
+          as: "event",
+          pipeline: [
+            {
+              $lookup: {
+                from: "users",
+                foreignField: "_id",
+                localField: "organizerId",
+                as: "organizer",
+              },
+            },
+            {
+              $addFields: {
+                organizer: { $first: "$organizer" },
+              },
+            },
+          ],
+        },
+      },
+      {
+        $addFields: {
+          event: { $first: "$event" },
+        },
+      },
+      {
+        $skip: skipAmount,
+      },
+    ]);
+
+    console.log(orders);
 
     const ordersCount = await Order.distinct("event._id").countDocuments(
       condition
