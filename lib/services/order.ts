@@ -71,15 +71,9 @@ export const getOrderByEvent = async ({
 
     if (!eventId) throw new Error("Event Id is Required");
 
+    console.log(searchString);
+
     const orders = await Order.aggregate([
-      {
-        $match: {
-          $and: [
-            { eventId: new mongoose.Types.ObjectId(eventId) },
-            { buyer: { $regex: RegExp(searchString, "i") } },
-          ],
-        },
-      },
       {
         $lookup: {
           from: "users",
@@ -112,7 +106,17 @@ export const getOrderByEvent = async ({
           buyer: "$buyer.name",
         },
       },
+      {
+        $match: {
+          $and: [
+            { eventId: new mongoose.Types.ObjectId(eventId) },
+            { buyer: { $regex: RegExp(searchString, "i") } },
+          ],
+        },
+      },
     ]);
+
+    console.log(orders);
 
     return JSON.parse(JSON.stringify(orders));
   } catch (error: any) {
