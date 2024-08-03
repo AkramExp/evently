@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { deleteEvent } from "@/lib/services/event";
 import { usePathname } from "next/navigation";
+import toast from "react-hot-toast";
 
 export const DeleteConfirmation = ({ eventId }: { eventId: string }) => {
   let [isPending, startTransition] = useTransition();
@@ -44,8 +45,10 @@ export const DeleteConfirmation = ({ eventId }: { eventId: string }) => {
 
           <AlertDialogAction
             onClick={() =>
-              startTransition(async () => {
-                await deleteEvent(eventId, pathname);
+              startTransition(() => {
+                deleteEvent(eventId, pathname)
+                  .then((response) => toast(response.message))
+                  .catch((error) => toast(error.message));
               })
             }
           >

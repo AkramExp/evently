@@ -35,6 +35,7 @@ const Signup = () => {
     registerUser(values)
       .then((response) => {
         toast(response.message);
+        form.reset();
       })
       .catch((error) => toast(error.message));
   }
@@ -111,8 +112,12 @@ const Signup = () => {
               </FormItem>
             )}
           />
-          <Button type="submit" className="mt-2">
-            Submit
+          <Button
+            type="submit"
+            className="mt-2 disabled:cursor-not-allowed"
+            disabled={form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? "Submitting" : "Submit"}
           </Button>
         </form>
       </Form>

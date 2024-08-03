@@ -93,8 +93,12 @@ const Signin = () => {
               </FormItem>
             )}
           />
-          <Button type="submit" className="mt-2">
-            Submit
+          <Button
+            type="submit"
+            className="mt-2 disabled:cursor-not-allowed"
+            disabled={form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? "Submitting" : "Submit"}
           </Button>
         </form>
       </Form>
