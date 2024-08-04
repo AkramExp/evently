@@ -6,8 +6,14 @@ import NavItems from "./NavItems";
 import MobileNav from "./MobileNav";
 import LogoutButton from "./LogoutButton";
 import { getCurrentUser } from "@/lib/services/user";
+import { getServerSession } from "next-auth";
+import { NextApiRequest, NextApiResponse } from "next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 
-const Header = async () => {
+const Header = async (context: {
+  req: NextApiRequest;
+  res: NextApiResponse;
+}) => {
   const user = await getCurrentUser();
 
   return (

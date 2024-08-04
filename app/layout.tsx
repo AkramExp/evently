@@ -3,7 +3,8 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import ReactQueryProvider from "@/components/shared/ReactQueryProvider";
 import { Toaster } from "react-hot-toast";
-import AuthProvider from "@/context/AuthContext";
+import AuthProvider from "@/context/SessionProvider";
+import { getServerSession } from "next-auth";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -16,16 +17,17 @@ export const metadata: Metadata = {
   description: "Evently is a platform for event management.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession();
   return (
     <ReactQueryProvider>
       <html lang="en">
         <body className={poppins.variable}>
-          <AuthProvider>
+          <AuthProvider session={session}>
             <Toaster position="top-center" />
             {children}
           </AuthProvider>

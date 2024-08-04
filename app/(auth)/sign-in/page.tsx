@@ -51,7 +51,7 @@ const Signin = () => {
     <section className="bg-white p-8 rounded-md flex flex-col gap-2 shadow-lg">
       <h1 className="text-2xl font-normal">Sign in</h1>
       <p className="text-gray-700">to continue to Evently</p>
-      <div className="flex flex-col md:flex-row gap-3 my-3">
+      {/* <div className="flex flex-col md:flex-row gap-3 my-3">
         <AuthButton
           icon="/assets/icons/github-icon.svg"
           text="Continue with Github"
@@ -61,7 +61,7 @@ const Signin = () => {
           text="Continue with GitHub"
         />
       </div>
-      <p className="text-center text-gray-700">or</p>
+      <p className="text-center text-gray-700">or</p> */}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

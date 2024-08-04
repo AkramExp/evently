@@ -15,10 +15,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { SignupSchema } from "@/lib/validation";
-import AuthButton from "@/components/shared/AuthButton";
 import Link from "next/link";
 import { registerUser } from "@/lib/services/user";
 import toast from "react-hot-toast";
+import Image from "next/image";
+import { signIn, useSession } from "next-auth/react";
 
 const Signup = () => {
   const form = useForm<z.infer<typeof SignupSchema>>({
@@ -40,21 +41,40 @@ const Signup = () => {
       .catch((error) => toast(error.message));
   }
 
+  const sessions = useSession();
+
+  console.log(sessions);
+
   return (
     <section className="bg-white p-8 rounded-md flex flex-col gap-2 shadow-lg">
-      <h1 className="text-2xl font-normal">Sign in</h1>
+      <h1 className="text-2xl font-normal">Sign up </h1>
       <p className="text-gray-700">to continue to Evently</p>
-      <div className="flex flex-col md:flex-row gap-3 my-3">
-        <AuthButton
-          icon="/assets/icons/github-icon.svg"
-          text="Continue with Github"
-        />
-        <AuthButton
-          icon="/assets/icons/google.svg"
-          text="Continue with GitHub"
-        />
+      {/* <div className="flex flex-col md:flex-row gap-3 my-3">
+        <button className="text-sm flex items-center gap-3 text-gray-700 border-gray-200 border-[1px] rounded-md px-4 py-2">
+          <Image
+            src="/assets/icons/github-icon.svg"
+            alt="github"
+            width={20}
+            height={20}
+          />
+          Continue with Github
+        </button>
+        <button
+          className="text-sm flex items-center gap-3 text-gray-700 border-gray-200 border-[1px] rounded-md px-4 py-2"
+          onClick={() =>
+            signIn("google", { callbackUrl: `${window.location.origin}` })
+          }
+        >
+          <Image
+            src="/assets/icons/google.svg"
+            alt="github"
+            width={20}
+            height={20}
+          />
+          Continue with Google
+        </button>
       </div>
-      <p className="text-center text-gray-700">or</p>
+      <p className="text-center text-gray-700">or</p> */}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
