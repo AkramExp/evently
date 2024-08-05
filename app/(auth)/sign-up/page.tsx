@@ -113,7 +113,7 @@ const Signup = () => {
               <FormItem>
                 <FormLabel className="form-label">Email</FormLabel>
                 <FormControl>
-                  <Input {...field} className="shad-input" />
+                  <Input {...field} className="shad-input" type="email" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -126,7 +126,7 @@ const Signup = () => {
               <FormItem>
                 <FormLabel className="form-label">Password</FormLabel>
                 <FormControl>
-                  <Input {...field} className="shad-input" />
+                  <Input {...field} className="shad-input" type="password" />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -19,12 +19,17 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useUploadThing } from "@/lib/uploadthing";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { getCurrentUser, updateUser } from "@/lib/services/user";
+import {
+  getCurrentUser,
+  updateUser,
+  updateUserAvatar,
+} from "@/lib/services/user";
 import { ProfileUploader } from "@/components/shared/ProfileUploader";
 
 const ProfileForm = () => {
   const [files, setFiles] = useState<File[]>([]);
   const { startUpload } = useUploadThing("imageUploader");
+  const [updatingAvatar, setUpdatingAvatar] = useState(false);
   const [user, setUser] = useState({
     name: "",
     username: "",
@@ -61,11 +66,12 @@ const ProfileForm = () => {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof ProfileValidation>) {
+  async function updateAvatar() {
     try {
-      console.log(values);
+      setUpdatingAvatar(true);
+      if (files.length === 0) return;
 
-      let uploadedImgUrl = values.photo;
+      let uploadedImgUrl = user.photo;
 
       if (files.length > 0) {
         const uploadedImages = await startUpload(files);
@@ -77,11 +83,21 @@ const ProfileForm = () => {
         uploadedImgUrl = uploadedImages[0].url;
       }
 
+      updateUserAvatar(uploadedImgUrl)
+        .then((response) => toast(response.message))
+        .catch((error) => toast(error.message))
+        .finally(() => setUpdatingAvatar(false));
+    } catch (error: any) {
+      console.log(error.message);
+    }
+  }
+
+  async function onSubmit(values: z.infer<typeof ProfileValidation>) {
+    try {
       const data = {
         name: values.name,
         username: values.username,
         email: values.email,
-        photo: uploadedImgUrl,
       };
 
       updateUser(data)
@@ -100,6 +116,32 @@ const ProfileForm = () => {
       >
         <h3 className="h3-bold text-center mb-4">Update Profile</h3>
 
+        <div className="flex items-center justify-between">
+          <FormField
+            control={form.control}
+            name="photo"
+            render={({ field }) => (
+              <FormItem className="w-full my-4">
+                <FormControl className="h-10">
+                  <ProfileUploader
+                    onFieldChange={field.onChange}
+                    imageUrl={field.value}
+                    setFiles={setFiles}
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button
+            onClick={updateAvatar}
+            disabled={updatingAvatar}
+            type="button"
+          >
+            {updatingAvatar ? "Updating" : "Update Avatar"}
+          </Button>
+        </div>
         <FormField
           control={form.control}
           name="username"
@@ -160,24 +202,6 @@ const ProfileForm = () => {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="photo"
-          render={({ field }) => (
-            <FormItem className="w-full">
-              {/* <FormLabel className="text-lg">Avatar</FormLabel> */}
-              <FormControl className="h-10">
-                <ProfileUploader
-                  onFieldChange={field.onChange}
-                  imageUrl={field.value}
-                  setFiles={setFiles}
-                />
-              </FormControl>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <Button
           type="submit"
           size="lg"

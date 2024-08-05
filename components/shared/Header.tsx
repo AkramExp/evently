@@ -36,7 +36,7 @@ const Header = async (context: {
 
         <div className="flex w-32 justify-end gap-3">
           {user && (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <Link href="/profile">
                 <img
                   src={user.photo || "/assets/icons/profile-placeholder.svg"}

@@ -49,7 +49,7 @@ export type IUser = {
 export type IUpdateUser = {
   name: string;
   username: string;
-  photo: string;
+  // photo: string;
   email: string;
 };
 

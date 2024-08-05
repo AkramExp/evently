@@ -36,11 +36,11 @@ export function ProfileUploader({
         <img
           src={imageUrl || "/assets/icons/profile-placeholder.svg"}
           alt="file upload"
-          className="object-cover rounded-full w-20 h-20"
+          className="object-cover rounded-full w-16 h-16 sm:w-20 sm:h-20"
         />
 
         <p className="text-primary-500 small-regular md:bbase-semibold">
-          Change profile photo
+          Choose Profile
         </p>
       </div>
     </div>

@@ -100,12 +100,33 @@ export async function updateUser(data: IUpdateUser) {
       name: data.name,
       username: data.username,
       email: data.email,
-      photo: data.photo,
     });
 
     revalidatePath("/profile");
 
     return { message: "Profile Updated Successfully" };
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+}
+
+export async function updateUserAvatar(photo: string) {
+  try {
+    await connectDB();
+
+    const userId = await getUserIdFromCookies();
+
+    if (!userId) throw new Error("Unauthorized Request");
+
+    if (!photo) throw new Error("Provide an image");
+
+    await User.findByIdAndUpdate(userId, {
+      photo,
+    });
+
+    revalidatePath("/profile");
+
+    return { message: "Avatar Updated Successfully" };
   } catch (error: any) {
     throw new Error(error.message);
   }
