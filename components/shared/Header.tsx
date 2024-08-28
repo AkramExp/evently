@@ -1,19 +1,12 @@
+import { getCurrentUser } from "@/lib/services/user";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 import { Button } from "../ui/button";
-import NavItems from "./NavItems";
-import MobileNav from "./MobileNav";
 import LogoutButton from "./LogoutButton";
-import { getCurrentUser } from "@/lib/services/user";
-import { getServerSession } from "next-auth";
-import { NextApiRequest, NextApiResponse } from "next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/options";
+import MobileNav from "./MobileNav";
+import NavItems from "./NavItems";
 
-const Header = async (context: {
-  req: NextApiRequest;
-  res: NextApiResponse;
-}) => {
+const Header = async () => {
   const user = await getCurrentUser();
 
   return (
