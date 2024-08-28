@@ -2,7 +2,7 @@
 
 Evently a comprehensive, full-stack platform for managing events. It serves as a hub, spotlighting diverse events taking place globally. Featuring seamless payment processing through Stripe, you have the capability to purchase tickets for any event or even initiate and manage your own events.
 
-![s1](https://github.com/AkramExp/snapgram/blob/main/frontend/public/screenshot.png)
+![s1](https://github.com/AkramExp/evently/blob/main/public/screenshot.png)
 
 #### Live Site : https://evently-akramexp.vercel.app
 
