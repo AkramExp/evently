@@ -8,7 +8,7 @@ Evently is a comprehensive, full-stack platform for managing events. It serves a
 
 ## Features
 
-The Reddit Clone offers a range of community-driven features, as listed below
+The Evently offers a range of features, as listed below
 
 - **Events (CRUD)**
   - Comprehensive functionality for creating, reading, updating, and deleting events, giving users full control over event management
